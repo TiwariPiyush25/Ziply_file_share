@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 
+// Dynamic API Base URL detection
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin;
+
 const GlobalAnimationStyles = ({ isDarkMode }) => (
   <style>{`
     @keyframes borderRotate {
@@ -361,7 +364,7 @@ function HomePage({ isDarkMode }) {
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: isDarkMode ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}` }}>
             <span style={{ fontSize: '18px' }}>🧹</span>
-            <h5 style={{ margin: '8px 0 4px 0', color : isDarkMode ? '#fff' : '#0f172a', fontSize: '14px', fontWeight: '700' }}>Automatic Storage Cleanup</h5>
+            <h5 style={{ margin: '8px 0 4px 0', color: isDarkMode ? '#fff' : '#0f172a', fontSize: '14px', fontWeight: '700' }}>Automatic Storage Cleanup</h5>
             <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#64748b', fontSize: '12px', lineHeight: '1.5' }}>Expired payloads and downloaded instant links are permanently deleted from storage automatically.</p>
           </div>
         </div>
@@ -442,7 +445,7 @@ function SendPage({ isDarkMode }) {
       setUploading(false);
     });
 
-    xhr.open('POST', 'http://localhost:5000/api/upload');
+    xhr.open('POST', `${API_BASE_URL}/api/upload`);
     xhr.send(formData);
   };
 
@@ -601,7 +604,7 @@ function ReceivePage({ isDarkMode }) {
     if (code.length !== 6) return setErrorMessage('Invalid code length.');
 
     try {
-      const checkRes = await fetch(`http://localhost:5000/api/check-status/${code}`, {
+      const checkRes = await fetch(`${API_BASE_URL}/api/check-status/${code}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: null })
@@ -620,7 +623,7 @@ function ReceivePage({ isDarkMode }) {
     try {
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = `http://localhost:5000/api/download/${code}`;
+      form.action = `${API_BASE_URL}/api/download/${code}`;
       form.style.display = 'none';
 
       if (passKey) {
@@ -704,7 +707,7 @@ function DashboardPage({ isDarkMode }) {
 
   const fetchTelemetry = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/telemetry');
+      const res = await fetch(`${API_BASE_URL}/api/telemetry`);
       const data = await res.json();
       if (data.success) {
         setTransactions(data.registry || []);
@@ -723,7 +726,7 @@ function DashboardPage({ isDarkMode }) {
 
   const handleDeleteTransaction = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/telemetry/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/telemetry/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         fetchTelemetry();
