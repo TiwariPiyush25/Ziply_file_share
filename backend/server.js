@@ -6,11 +6,12 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
+// Update: All origins allowed for deployed environment or dynamic origin setting
 app.use(cors({
-  origin: 'http://localhost:5173', 
-  exposedHeaders: ['Content-Disposition'] 
+  origin: '*', 
+  exposedHeaders: ['Content-Disposition']
 }));
 
 app.use(express.json());
@@ -125,7 +126,7 @@ app.post('/api/upload', (req, res, next) => {
   res.json({ success: true, code: code });
 });
 
-// 2. CHECK STATUS & PASSWORD VERIFICATION (FIXED: 401 loop prevented)
+// 2. CHECK STATUS
 app.post('/api/check-status/:code', (req, res) => {
   const { code } = req.params;
   const { password } = req.body;
@@ -165,7 +166,7 @@ app.post('/api/check-status/:code', (req, res) => {
   });
 });
 
-// 3. SUPERFAST DOWNLOAD ENGINE
+// 3. DOWNLOAD ENGINE
 app.post('/api/download/:code', async (req, res) => {
   const { code } = req.params;
   const { password } = req.body;
@@ -278,7 +279,7 @@ app.get('/api/telemetry', (req, res) => {
   });
 });
 
-// 5. DELETE ACTION ROUTE (Dashboard trash button integration)
+// 5. DELETE ACTION ROUTE
 app.delete('/api/telemetry/:id', (req, res) => {
   const { id } = req.params;
   const targetId = Number(id);
