@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -34,7 +34,7 @@ const GlobalAnimationStyles = ({ isDarkMode }) => (
     }
 
     .master-glass-hull {
-      width: 100%; max-width: 680px; 
+      width: 100%; max-width: 820px; 
       background: ${isDarkMode ? 'rgba(255, 255, 255, 0.01)' : 'rgba(255, 255, 255, 0.7)'};
       backdrop-filter: blur(35px) saturate(200%); -webkit-backdrop-filter: blur(35px) saturate(200%);
       border: 1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)'};
@@ -258,25 +258,29 @@ function HomePage({ isDarkMode }) {
   const faqs = [
     { 
       q: "How does the ZIP Archiving feature work?", 
-      a: "When you upload multiple files or folders, Ziply automatically bundles them into a single, high-compression `.zip` archive on the fly for fast and effortless one-click downloads." 
+      a: "When you upload multiple files or entire folders, Ziply automatically bundles them into a single, high-compression `.zip` archive on the fly. This ensures fast, organized transfers with effortless one-click downloads for your recipients." 
     },
     { 
       q: "Is registration or personal information required?", 
-      a: "No registration, email, or login required. You can instantly drag, upload, and generate secure download codes right away with total anonymity." 
+      a: "No account, email, or personal details are required. Ziply operates on a zero-log, privacy-first model. You can instantly drag, upload, and generate secure download codes right away with total anonymity." 
     },
     { 
       q: "How long do shared files remain active?", 
-      a: "You have complete control. Choose between 5m, 15m, 1h, 1d, or set '1 Download Max' (Instant) so files self-destruct and vaporize immediately after being fetched." 
+      a: "You have total control over data lifespan. Choose between 5m, 15m, 1h, 1d, or set '1 Download Max' (Instant Self-Destruct) so files vaporize immediately after being fetched, leaving zero digital footprints." 
     },
     { 
       q: "How can I track my active uploads?", 
-      a: "Head over to the Dashboard tab to see real-time live metrics including active file shares, bandwidth volume, live download hits, and sync latency." 
+      a: "Head over to the Dashboard tab to see real-time live metrics including active file shares, transferred bandwidth volume, live download hits, and sync latency with one-click manual remote wipe options." 
+    },
+    {
+      q: "Are my files encrypted during transit?",
+      a: "Yes, all transfers take place over SSL/TLS encrypted pipelines. You can also apply custom password protection to secure sensitive archives before sharing the 6-digit access code."
     }
   ];
 
   return (
-    <div className="master-glass-hull" style={{ maxWidth: '780px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '44px' }}>
+    <div className="master-glass-hull">
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <div style={{ 
           display: 'inline-flex', alignItems: 'center', gap: '8px', 
           background: isDarkMode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)', 
@@ -287,15 +291,23 @@ function HomePage({ isDarkMode }) {
           <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#34d399', boxShadow: '0 0 8px #34d399' }}></span>
           Encrypted Relay Network Active
         </div>
-        <h1 style={{ fontSize: '40px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '950', margin: '0 0 14px 0', letterSpacing: '-1.5px', lineHeight: '1.15' }}>
+
+        <h1 style={{ fontSize: '42px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '950', margin: '0 0 16px 0', letterSpacing: '-1.5px', lineHeight: '1.15' }}>
           Share Files Privately.<br/>Automated ZIPs & Self-Destruct.
         </h1>
-        <p style={{ color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '15px', lineHeight: '1.6', margin: '0 auto', maxWidth: '600px' }}>
-          Upload multiple files bundled into compressed ZIP archives, shield them with passwords, set dynamic expiry timers, and monitor live telemetry in real-time.
+
+        <p style={{ color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '15px', lineHeight: '1.7', margin: '0 auto 12px auto', maxWidth: '680px' }}>
+          Ziply offers an ultra-fast, friction-free file sharing experience designed for modern privacy needs. 
+          Upload single files or bulk datasets, and our server automatically compresses them into structured ZIP archives. 
+          Protect your downloads with custom passwords, set automatic self-destruct timers, and track download telemetry live from your dashboard.
+        </p>
+
+        <p style={{ color: isDarkMode ? '#6b7280' : '#64748b', fontSize: '13px', lineHeight: '1.5', margin: '0 auto', maxWidth: '620px' }}>
+          🔒 Zero logs. Zero tracking. Instant direct transfers without needing account signups or software installations.
         </p>
       </div>
 
-      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '44px', textAlign: 'center' }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '40px', textAlign: 'center' }}>
         <div style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0) 100%)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)'}`, padding: '16px', borderRadius: '16px' }}>
           <div style={{ fontSize: '24px', fontWeight: '900', color: isDarkMode ? '#ffffff' : '#0f172a', fontFamily: 'monospace' }}>ZIP</div>
           <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', marginTop: '4px', letterSpacing: '0.3px' }}>AUTO ARCHIVING</div>
@@ -316,12 +328,14 @@ function HomePage({ isDarkMode }) {
       </div>
 
       <div style={{ marginBottom: '48px' }}>
-        <h3 style={{ fontSize: '16px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '800', marginBottom: '20px', letterSpacing: '-0.3px' }}>How Ziply Works</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+        <h3 style={{ fontSize: '18px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '800', marginBottom: '8px', letterSpacing: '-0.3px' }}>How Ziply Works</h3>
+        <p style={{ color: isDarkMode ? '#9ca3af' : '#64748b', fontSize: '13px', margin: '0 0 20px 0' }}>Three simple steps to move data across devices securely.</p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
           <div style={{ background: 'rgba(255,255,255,0.005)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}`, padding: '20px', borderRadius: '16px' }}>
             <div className="step-badge">1</div>
             <h4 style={{ margin: '0 0 6px 0', color: isDarkMode ? '#fff' : '#0f172a', fontSize: '14px', fontWeight: '700' }}>Upload & Bundle</h4>
-            <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '12px', lineHeight: '1.5' }}>Drop single or multiple files. Ziply automatically archives them into compressed `.zip` packages.</p>
+            <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '12px', lineHeight: '1.5' }}>Drop single or multiple files. Ziply automatically archives them into compressed `.zip` packages for faster delivery.</p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.005)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}`, padding: '20px', borderRadius: '16px' }}>
             <div className="step-badge">2</div>
@@ -336,7 +350,24 @@ function HomePage({ isDarkMode }) {
         </div>
       </div>
 
-      <div style={{ borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)'}`, paddingTop: '40px' }}>
+      <div style={{ marginBottom: '48px', borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)'}`, paddingTop: '36px' }}>
+        <h3 style={{ fontSize: '18px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '800', marginBottom: '16px', letterSpacing: '-0.3px' }}>Why Choose Ziply?</h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+          <div style={{ padding: '16px', borderRadius: '12px', background: isDarkMode ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}` }}>
+            <span style={{ fontSize: '18px' }}>⚡</span>
+            <h5 style={{ margin: '8px 0 4px 0', color: isDarkMode ? '#fff' : '#0f172a', fontSize: '14px', fontWeight: '700' }}>Zero-Latency Streaming</h5>
+            <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#64748b', fontSize: '12px', lineHeight: '1.5' }}>Files are processed on high-speed buffer memory, ensuring maximum download throughput for recipient devices.</p>
+          </div>
+          <div style={{ padding: '16px', borderRadius: '12px', background: isDarkMode ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)', border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.04)'}` }}>
+            <span style={{ fontSize: '18px' }}>🧹</span>
+            <h5 style={{ margin: '8px 0 4px 0', color : isDarkMode ? '#fff' : '#0f172a', fontSize: '14px', fontWeight: '700' }}>Automatic Storage Cleanup</h5>
+            <p style={{ margin: 0, color: isDarkMode ? '#9ca3af' : '#64748b', fontSize: '12px', lineHeight: '1.5' }}>Expired payloads and downloaded instant links are permanently deleted from storage automatically.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)'}`, paddingTop: '36px' }}>
         <h3 style={{ fontSize: '18px', color: isDarkMode ? '#fff' : '#0f172a', fontWeight: '800', marginBottom: '20px', letterSpacing: '-0.3px' }}>Frequently Asked Questions</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {faqs.map((faq, idx) => (
@@ -346,7 +377,7 @@ function HomePage({ isDarkMode }) {
                 <span style={{ color: '#6b7280', fontSize: '11px' }}>{openFaq === idx ? '▲' : '▼'}</span>
               </div>
               {openFaq === idx && (
-                <p style={{ margin: '14px 0 0 0', color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '13px', lineHeight: '1.5' }}>
+                <p style={{ margin: '14px 0 0 0', color: isDarkMode ? '#9ca3af' : '#475569', fontSize: '13px', lineHeight: '1.6' }}>
                   {faq.a}
                 </p>
               )}
@@ -428,7 +459,7 @@ function SendPage({ isDarkMode }) {
           alignItems: 'center', 
           gap: '20px' 
         }}>
-          <span style={{ fontSize: '11px', color: '#34d399', fontWeight: '800', letterSpacing: '1px' }}>FILE UPLOADED SUCCESSFULLY</span>
+          <span style={{ fontSize: '11px', color: '#34d399', fontWeight: '800', letterSpacing: '1px' }}>FILE UPLOADING COMPLETED</span>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <div style={{ fontSize: '36px', fontWeight: '900', fontFamily: 'monospace', color: isDarkMode ? '#fff' : '#0f172a', letterSpacing: '2px' }}>{shareCode}</div>
@@ -558,7 +589,6 @@ function SendPage({ isDarkMode }) {
   );
 }
 
-// ⚡ RECEIVE PAGE WITH NATIVE FORM STREAM FIX INTEGRATED
 function ReceivePage({ isDarkMode }) {
   const [inputCode, setInputCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -586,10 +616,8 @@ function ReceivePage({ isDarkMode }) {
     } catch { setErrorMessage('Network error.'); }
   };
 
-  // 🚀 SUPERFAST INSTANT STREAM FIX
   const executePayloadDownload = (code, passKey) => {
     try {
-      // Direct Native Form Submit - RAM loading zero kar deta hai!
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = `http://localhost:5000/api/download/${code}`;
@@ -695,17 +723,19 @@ function DashboardPage({ isDarkMode }) {
 
   const handleDeleteTransaction = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/telemetry/${id}`, { method: 'DELETE' });
-      fetchTelemetry();
-    } catch (e) { }
+      const res = await fetch(`http://localhost:5000/api/telemetry/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        fetchTelemetry();
+      }
+    } catch (e) {
+      console.error("Delete failed", e);
+    }
   };
 
   return (
     <div style={{ width: '100%', maxWidth: '1060px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      
-      {/* Metrics Row */}
       <div className="stats-grid-db" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px' }}>
-        
         <div className="metric-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
             <span style={{ fontSize: '11px', fontWeight: '700', color: isDarkMode ? '#9ca3af' : '#64748b', letterSpacing: '0.8px' }}>ACTIVE SHARES</span>
@@ -749,10 +779,8 @@ function DashboardPage({ isDarkMode }) {
             <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '4px', fontWeight: '600' }}>ACTIVE RELAY LATENCY</div>
           </div>
         </div>
-
       </div>
 
-      {/* Main Transactions Log */}
       <div style={{ 
         width: '100%', 
         background: isDarkMode ? 'rgba(255, 255, 255, 0.01)' : 'rgba(255, 255, 255, 0.7)',
@@ -760,7 +788,6 @@ function DashboardPage({ isDarkMode }) {
         borderRadius: '24px', padding: '32px', boxSizing: 'border-box',
         boxShadow: isDarkMode ? '0 30px 70px rgba(0,0,0,0.5)' : '0 30px 70px rgba(15,23,42,0.04)'
       }}>
-        
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -820,7 +847,6 @@ function DashboardPage({ isDarkMode }) {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );

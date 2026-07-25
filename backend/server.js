@@ -13,7 +13,6 @@ app.use(cors({
   exposedHeaders: ['Content-Disposition'] 
 }));
 
-// Form submit parsing ke liye x-www-form-urlencoded support add kiya hai
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -126,24 +125,47 @@ app.post('/api/upload', (req, res, next) => {
   res.json({ success: true, code: code });
 });
 
-// 2. CHECK STATUS & PASSWORD VERIFICATION
+// 2. CHECK STATUS & PASSWORD VERIFICATION (FIXED: 401 loop prevented)
 app.post('/api/check-status/:code', (req, res) => {
   const { code } = req.params;
   const { password } = req.body;
+  
   const fileRecord = filesDatabase.find(f => f.code === code.toUpperCase() && f.state === 'ACTIVE');
 
   if (!fileRecord) {
     return res.status(404).json({ success: false, message: 'File not found or expired.' });
   }
 
-  if (fileRecord.password && fileRecord.password !== password) {
-    return res.status(401).json({ success: false, message: 'Incorrect password.', isProtected: true });
+  if (fileRecord.password && !password) {
+    return res.json({ 
+      success: true, 
+      isProtected: true, 
+      isPasswordValid: false,
+      fileName: fileRecord.fileName, 
+      volume: fileRecord.volume,
+      message: 'Password required' 
+    });
   }
 
-  res.json({ success: true, isProtected: !!fileRecord.password, fileName: fileRecord.fileName, volume: fileRecord.volume });
+  if (fileRecord.password && fileRecord.password !== password) {
+    return res.json({ 
+      success: false, 
+      isProtected: true, 
+      isPasswordValid: false,
+      message: 'Incorrect password.' 
+    });
+  }
+
+  res.json({ 
+    success: true, 
+    isProtected: !!fileRecord.password, 
+    isPasswordValid: true,
+    fileName: fileRecord.fileName, 
+    volume: fileRecord.volume 
+  });
 });
 
-// 3. SUPERFAST DOWNLOAD ENGINE (STREAMS DIRECTLY)
+// 3. SUPERFAST DOWNLOAD ENGINE
 app.post('/api/download/:code', async (req, res) => {
   const { code } = req.params;
   const { password } = req.body;
@@ -172,7 +194,6 @@ app.post('/api/download/:code', async (req, res) => {
 
   filesDatabase[recordIndex].hits += 1;
 
-  // Single File Direct Stream (ZERO CPU LAG)
   if (files.length === 1) {
     const filePath = path.join(folderPath, files[0]);
     const stat = fs.statSync(filePath);
@@ -183,9 +204,7 @@ app.post('/api/download/:code', async (req, res) => {
 
     const readStream = fs.createReadStream(filePath);
     readStream.pipe(res);
-  } 
-  // Multiple Files Fast Stream (Level 0 - Maximum Speed)
-  else {
+  } else {
     const downloadName = `shared-files-${fileRecord.code}.zip`;
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${downloadName}"`);
@@ -257,6 +276,33 @@ app.get('/api/telemetry', (req, res) => {
     },
     registry: updatedRegistry
   });
+});
+
+// 5. DELETE ACTION ROUTE (Dashboard trash button integration)
+app.delete('/api/telemetry/:id', (req, res) => {
+  const { id } = req.params;
+  const targetId = Number(id);
+
+  const recordIndex = filesDatabase.findIndex(f => f.id === targetId);
+
+  if (recordIndex === -1) {
+    return res.status(404).json({ success: false, message: 'Record not found' });
+  }
+
+  const record = filesDatabase[recordIndex];
+
+  const folderPath = path.join(UPLOADS_DIR, record.code);
+  if (fs.existsSync(folderPath)) {
+    try {
+      fs.rmSync(folderPath, { recursive: true, force: true });
+    } catch (err) {
+      console.error('Disk folder removal error:', err);
+    }
+  }
+
+  filesDatabase.splice(recordIndex, 1);
+
+  return res.json({ success: true, message: 'Relay deleted successfully' });
 });
 
 app.listen(PORT, () => {
